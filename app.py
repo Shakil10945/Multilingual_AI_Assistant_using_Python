@@ -1,13 +1,24 @@
 import streamlit as st
 from src.helper import voice_input, text_to_speech, llm_model_object
+import logging
+
+#Configure logging
+logging.basicConfig(
+    level=logging.INFO, 
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler("app.log"),
+        logging.StreamHandler()
+    ]
+)
 
 def main():
     st.title("Multilingual AI Assistant")
 
     #craeate a tab for voice input and a tab for text input
-
     tabs= st.tabs(["Voice Input", "Text Input"])
 
+    #Voice Input tab
     with tabs[0]:
 
         if st.button("Ask me anything!"):
@@ -24,10 +35,11 @@ def main():
                 st.text_area(label= "Response: ", value = response, height=350)
                 st.audio(audio_bytes, format='audion/mp3')
                 st.download_button(label="Download Speech", data=audio_bytes, file_name="speech.mp3", mime="audio/mp3")
-        
+                
+    #Text Input tab    
     with tabs[1]:
         user_input = st.text_input("Type your query heare")
-        if st.button("Sibmit"):
+        if st.button("Submit"):
             response = llm_model_object(user_input)
             text_to_speech(response)
 

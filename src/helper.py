@@ -2,49 +2,65 @@ import speech_recognition as sr
 import google.generativeai as genai
 import os
 from gtts import gTTS
+import logging
 
+#Configuration logging
+logging.basicConfig(
+    level=logging.INFO, 
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler("app.log"),
+        logging.StreamHandler()
+    ]
+)
 
-GOOGLE_API_KEY = "##############" #put your gemini api
+GOOGLE_API_KEY = "******************************" #Please enter your gemini api
+
 os.environ['GOOGLE_API_KEY'] = GOOGLE_API_KEY
 
-
 def voice_input():
-    # Create a recognizer instance
+    logging.info("initializing voice recognition.....")
+    #create a recognizer instance
     r = sr.Recognizer()
 
     with sr.Microphone() as source:
-        print("Listening...")
+        logging.info("Listenning for voice inpu...t")
         audio = r.listen(source)
 
     try:
-        text = r.recognize_google(audio)  # Using Google Speech Recognition
-        print("You said:", text)
+        text = r.recognize_google(audio) #using google speech recognition
+        logging.info(f"Voice input recognized: {text}")
         return text
     except sr.UnknownValueError:
-        print("Sorry, could not understand audio")
+        logging.error("Google Speech Recognition could not understand your voice.")
+        return None
     except sr.RequestError as e:
-        print("Could not request results from Google Speech Recognition service; {0}".format(e))
-
-
+        logging.info(f"Could not request results from Google Speech Recognition Service; {e}")
+        return None
     
 
 def text_to_speech(text):
-    # Create a gTTS object
-    tts = gTTS(text=text, lang='en')  # Language can be changed
+    logging.info(f"Converting to specch: {text}")
 
-    # Save the audio as an MP3 file
+    #create a gTTS object
+    tts = gTTS(text=text, lang= 'en') #language can be changed
+    #save the audio as an MP3 file
     tts.save("speech.mp3")
 
+    logging.info("Text-to-speech conversion completed and saved as specch.mp3")
 
-
+    
 def llm_model_object(user_text):
-    genai.configure(api_key=GOOGLE_API_KEY)
+    logging.info(f"Geenrating response for user text: {user_text}")
+
+    genai.configure(api_key = GOOGLE_API_KEY)
     
     model = genai.GenerativeModel('gemini-pro')
-    
-    response=model.generate_content(user_text)
-    
-    result=response.text
-    
+
+    response = model.generate_content(user_text)
+
+    result = response.text
+
+    logging.info(f"Generated response: {result}")
+
     return result
-    
