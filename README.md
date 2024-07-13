@@ -25,8 +25,8 @@ project/
 
 1. **Clone the repository**:
 bash
-    git clone https://github.com/yourusername/multilingual-ai-assistant.git
-    cd multilingual-ai-assistant
+    git clone https://github.com/Shakil10945/Multilingual_AI_Assistant_using_Python
+    cd Multilingual_AI_Assistant_using_Python
    
 2. **Create and activate a virtual environment**:
 
