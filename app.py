@@ -1,8 +1,9 @@
 import streamlit as st
-from src.helper import voice_input, text_to_speech, llm_model_object
+from src.ai_assistant import AIAssistant
+from src.ui_handler import UIHandler
 import logging
 
-#Configure logging
+# Configure logging to save to a file
 logging.basicConfig(
     level=logging.INFO, 
     format='%(asctime)s - %(levelname)s - %(message)s',
@@ -13,44 +14,9 @@ logging.basicConfig(
 )
 
 def main():
-    st.title("Multilingual AI Assistant")
+    assistant = AIAssistant(google_api_key="***************************")
+    ui_handler = UIHandler(assistant)
+    ui_handler.display_ui()
 
-    #craeate a tab for voice input and a tab for text input
-    tabs= st.tabs(["Voice Input", "Text Input"])
-
-    #Voice Input tab
-    with tabs[0]:
-
-        if st.button("Ask me anything!"):
-            with st.spinner("Listenning......"):
-                text = voice_input()
-                response = llm_model_object(text)
-                text_to_speech(response)
-
-
-                #Display audio player and download link
-                audio_file = open("speech.mp3",'rb')
-                audio_bytes = audio_file.read()
-
-                st.text_area(label= "Response: ", value = response, height=350)
-                st.audio(audio_bytes, format='audion/mp3')
-                st.download_button(label="Download Speech", data=audio_bytes, file_name="speech.mp3", mime="audio/mp3")
-                
-    #Text Input tab    
-    with tabs[1]:
-        user_input = st.text_input("Type your query heare")
-        if st.button("Submit"):
-            response = llm_model_object(user_input)
-            text_to_speech(response)
-
-            #Display audio player and download link
-            audio_file = open("speech.mp3",'rb')
-            audio_bytes = audio_file.read()
-
-            st.text_area(label= "Response: ", value = response, height=350)
-            st.audio(audio_bytes, format='audion/mp3')
-            st.download_button(label="Download Speech", data=audio_bytes, file_name="speech.mp3", mime="audio/mp3")
-        
-
-if __name__=="__main__":
+if __name__ == "__main__":
     main()
